@@ -1,4 +1,4 @@
-var wssPort = 3005;
+var wssPort = 9000;
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({port: wssPort});
 
