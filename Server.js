@@ -29,12 +29,15 @@ wsServer.on('request', function(request) {
 		return;
 	}
 	var connection = request.accept('', request.origin);
-	clients.push(connection);
+	// clients.push(connection);
 
 	console.log((new Date()) + ' Connection accepted');
 	connection.on('message', function(message) {
 		if (message.type==='utf8') {
 			console.log('Received message: ' + message.utf8Data);
+			if (message=='iamrobot') {
+				clients.push(connection);
+			}
 			clients.forEach(function (client) {
 				client.send(message.utf8Data);
 			});
