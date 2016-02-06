@@ -1,6 +1,8 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
+var port = 3005;
+
 var clients = [];
 
 var server = http.createServer(function(request, response) {
@@ -9,8 +11,8 @@ var server = http.createServer(function(request, response) {
 	response.end();
 });
 
-server.listen(9000, function() {
-	console.log((new Date()) + ' Server is listening on port 9000');
+server.listen(port, function() {
+	console.log((new Date()) + ' Server is listening on port ' + port);
 });
 
 wsServer = new WebSocketServer({
@@ -36,6 +38,7 @@ wsServer.on('request', function(request) {
 		if (message.type==='utf8') {
 			console.log('Received message: ' + message.utf8Data);
 			if (message=='iamrobot') {
+				console.log('pushing robot...');
 				clients.push(connection);
 			}
 			clients.forEach(function (client) {
