@@ -2,15 +2,15 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 
 var clients = [];
-
+var port = 8000;
 var server = http.createServer(function(request, response) {
 	console.log((new Date()) + ' Received request for ' + request.url);
 	response.writeHead(404);
 	response.end();
 });
 
-server.listen(9000,'0.0.0.0', function() {
-	console.log((new Date()) + ' Server is listening on port 9000');
+server.listen(port, '0.0.0.0', function() {
+	console.log((new Date()) + ' Server is listening on port ' + port);
 });
 
 wsServer = new WebSocketServer({
