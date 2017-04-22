@@ -1,6 +1,10 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var port = 3388;
+var fs = require('fs');
+
+var json = JSON.parse(fs.readFileSync('total.json', 'utf8'));
+
 var clients = [];
 
 var server = http.createServer(function(request, response) {
@@ -18,6 +22,14 @@ wsServer = new WebSocketServer({
 	autoAcceptConnections: false
 });
 
+// get total & active in localfile
+// bind to global var
+
+var total = json.total;
+var active = json.active;
+console.log('Active: ' + active);
+console.log('Total: ' + total);
+
 function originIsAllowed(origin){
 	return true;
 }
@@ -32,6 +44,26 @@ wsServer.on('request', function(request) {
 	clients.push(connection);
 
 	console.log((new Date()) + ' Connection accepted');
+
+	// increase total & active by 1
+	total += 1;
+	active += 1;
+
+	console.log('New active: ' + active);
+	console.log('New total: ' + total);
+
+	// broadcast to all 
+	clients.forEach(function (client) {
+		client.send(JSON.stringify({
+			"total": total,
+			"active": active
+		}));
+	});
+
+	// save to file
+
+	fs.writeFile('total.json', JSON.stringify({'total': total, 'active': active}), null, 4);
+
 	connection.on('message', function(message) {
 		if (message.type==='utf8') {
 			console.log('Received message: ' + message.utf8Data);
@@ -44,5 +76,23 @@ wsServer.on('request', function(request) {
 	});
 	connection.on('close', function(reasonCode, description) {
 		console.log((new Date()) + ' Peer' + connection.remoteAddress + ' disconnected');
+		// decrease active by 1
+		active -= 1;
+		if (active < 0) {
+			active = 0;
+		}
+
+		console.log('New active: ' + active);
+		console.log('New total: ' + total);
+
+		clients.forEach(function (client) {
+			client.send(JSON.stringify({
+				"total": total,
+				"active": active
+			}));
+		});
+
+		// save to file
+		fs.writeFile('total.json', JSON.stringify({'total': total, 'active': active}), null, 4);
 	});
 });
