@@ -67,8 +67,19 @@ wsServer.on('request', function(request) {
 	connection.on('message', function(message) {
 		if (message.type==='utf8') {
 			console.log('Received message: ' + message.utf8Data);
+
+			var object = JSON.parse(message.utf8Data);
+			var dict = {
+				"lat": object.lat,
+				"lng": object.lng,
+				"country_code": object.country_code,
+				"country_name": object.country_name,
+				"active": active,
+				"total": total
+			};
+
 			clients.forEach(function (client) {
-				client.send(message.utf8Data);
+				client.send(JSON.stringify(dict));
 			});
 		} else if (message.type==='binary') {
 			console.log('Received binary: ' + message.binaryData.length + ' bytes');
