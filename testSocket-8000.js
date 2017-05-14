@@ -45,6 +45,6 @@ wsServer.on('request', function(request) {
 	connection.on('close', function(reasonCode, description) {
 		console.log((new Date()) + ' Peer' + connection.remoteAddress + ' disconnected');
 		var index = clients.indexOf(connection);
-		clients.splice(index);
+		clients.splice(index, 1);
 	});
 });

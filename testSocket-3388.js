@@ -87,6 +87,10 @@ wsServer.on('request', function(request) {
 	});
 	connection.on('close', function(reasonCode, description) {
 		console.log((new Date()) + ' Peer' + connection.remoteAddress + ' disconnected');
+
+		var index = clients.indexOf(connection);
+		clients.splice(index, 1);
+		
 		// decrease active by 1
 		active -= 1;
 		if (active < 0) {
